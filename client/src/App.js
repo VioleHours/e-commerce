@@ -1,10 +1,11 @@
 import './App.css';
 import Products from './components/Card/Card.js';
+import NavBar from './components/Nav/NavBar';
 
 function App() {
   return (
     <div className="App">
-      <h1>Esto es el incio</h1>
+      <NavBar />
       <Products />
     </div>
   );

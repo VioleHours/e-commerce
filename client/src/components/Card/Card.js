@@ -1,4 +1,5 @@
-import React from 'react';
+import * as React from 'react';
+import { useState, useStateValue } from 'react';
 import { styled } from '@mui/material/styles';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
@@ -12,7 +13,9 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { AddShoppingCart } from '@mui/icons-material';
 import accounting from 'accounting';
-// import MoreVertIcon from '@mui/icons-material/MoreVert';
+import { ActionTypes } from '@mui/base';
+import '../../product_data';
+
 
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
@@ -25,12 +28,32 @@ const ExpandMore = styled((props) => {
   }),
 }));
 
-export default function Products() {
-  const [expanded, setExpanded] = React.useState(false);
+export default function Products({
+  product: {id, name, productType, image, price, rating, description},
+}) {
+  // const classes = useStyles();
+  const [expanded, setExpanded] = useState(false);
+  const [ /*{basket}*/, dispatch] = useStateValue();
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
+
+  const addToBasket = () => {
+    dispatch({
+      type: ActionTypes.ADD_TO_BASKET,
+      item: {
+        id,
+        name,
+        productType,
+        image,
+        price,
+        rating, 
+        description,
+      },
+    });
+  };
+
 
   return (
     <Card sx={{ maxWidth: 345 }}>
@@ -41,31 +64,31 @@ export default function Products() {
             variant='h5'
             color='textSecondary'
             >
-            {accounting.formatMoney(7500, 'ARS')} 
+            {accounting.formatMoney(price, 'ARS')} 
           </Typography>
         }
-        title="Harry Potter Mug"
+        title={name || 'product'}
         subheader="in Stock"
       />
       <CardMedia
         component="img"
         height=""
-        image="https://m.media-amazon.com/images/I/81e1-3xT5dL._AC_SS300_.jpg"
-        alt=""
+        image={image}
+        alt={name}
       />
       <CardContent>
         <Typography variant="body2" color="text.secondary">
-          LA MEJOR PERRA TAZA DEL MUNDO
+          {productType}
         </Typography>
       </CardContent>
       <CardActions disableSpacing>
         <IconButton aria-label="add to favorites">
           <FavoriteIcon />
         </IconButton>
-        <IconButton aria-label='Add to cart' onClick={() => alert('emulamos compra')}>
+        <IconButton aria-label='Add to cart' onClick={addToBasket}>
           <AddShoppingCart fontSize='large'/>
         </IconButton>
-        {Array(3)
+        {Array(rating)
         .fill()
         .map((_, i) => (
           <p>&#11088;</p>
@@ -81,7 +104,7 @@ export default function Products() {
       </CardActions>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
-          <Typography paragraph>{'taza del mejor mago que ha existido'}</Typography>
+          <Typography paragraph>{description}</Typography>
         </CardContent>
       </Collapse>
     </Card>
